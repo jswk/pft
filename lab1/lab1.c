@@ -29,7 +29,7 @@ int main(int argc, char *argv[]) {
         q[i+1] = q[i] + w[i+1]*dt;
     }
 
-    printf("time position velocity energy\n");
+    /*printf("time position velocity energy\n");*/
     for(int i = 0; i < tabsize; i++) {
         double E = r*r*w[i]*w[i]/2. - g*r*cos(q[i]);
         printf("%f %f %f %f\n", i*dt, q[i], w[i], E);

@@ -1,0 +1,151 @@
+\documentclass[a4paper; 12pt]{article}
+
+% global includes
+\usepackage[polish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{courier} %times, kurier
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{indentfirst}
+\usepackage{icomma}
+\usepackage{booktabs}
+\usepackage{hyperref}
+
+\usepackage{listings}
+
+\graphicspath{{plt/}}
+
+% local includes
+\usepackage[locale=FR]{siunitx}
+\sisetup{per-mode=symbol-or-fraction}
+
+\title{Ćwiczenie IB: Wahadło matematyczne}
+\author{Jakub Sawicki}
+\date{\today}
+
+\begin{document}
+\renewcommand{\figurename}{Rys.}
+\renewcommand{\tablename}{Tab.}
+\renewcommand{\abstractname}{Abstrakt}
+
+\maketitle
+
+\section{Wahadło matematyczne}
+
+Wahadło matematyczne to punkt materialny zawieszony na nieważkiej
+i~nierozciągliwej nici o~długości $R$ w~jednorodnym polu grawitacyjnym
+o~przyspieszeniu $g$ i~skierowanym w~dół.
+Układ taki ma tylko jeden stopień swobody a~mianowicie kąt $\varphi$
+określający położenie punktu.
+$\varphi=0$ dla dolnego punktu równowagi wahadła.
+
+Równanie ruchu dla takiego układu ma postać
+\begin{equation}
+    R\ddot{\varphi}+g\sin{\varphi} = 0 \text{ .}
+    \label{eq:eqofmotion}
+\end{equation}
+Można je rozwiązać analitycznie dla niewielkich $\varphi$, wtedy rozwiązanie ma postać
+\begin{equation}
+    \varphi(t) = A \sin(\beta t + \alpha) \text{ ,}
+    \label{eq:analyticsolution}
+\end{equation}
+nie jest to jednak rozwiązanie poprawne dla większych $\varphi$.
+
+
+\section{Rozwiązanie numeryczne}
+
+W~celu rozwiązania równania różniczkowego wyższego rzędu niż pierwszego należy
+je sprowadzić do układu równań pierwszego stopnia.
+\begin{equation}
+    \begin{cases}
+        \dot{\omega}(t) = - \beta^2\sin{\varphi(t)} \\
+        \dot{\varphi}(t) = \omega(t)
+    \end{cases}
+    \label{eq:1storderODE}
+\end{equation}
+
+Rozwiązanie tego układu równań będziemy prowadzić na pewnej zdyskretyzowanej
+siatce co wymusza wprowadzenie pewnego kroku czasowego (w~tym przypadku stałego) oraz zastosowanie różnic
+skończonych do wyrażenia przybliżeń różniczek.
+\begin{equation}
+    \begin{cases}
+        d\omega(t) = - \beta^2 \sin{\varphi(t)} dt \\
+        d\varphi(t) = \omega(t) dt
+    \end{cases}
+\end{equation}
+\begin{equation}
+    \begin{cases}
+        \Delta\omega(t) = - \beta^2 \sin{\varphi(t)} \Delta t \\
+        \Delta\varphi(t) = \omega(t) \Delta t
+    \end{cases}
+\end{equation}
+\begin{equation}
+    \begin{cases}
+        \omega(t_{i+1}) = \omega(t_{i}) - \beta^2 \sin{\varphi(t_i)} \Delta t \\
+        \varphi(t_{i+1}) = \varphi(t_i) + \omega(t_{i+1}) \Delta t
+    \end{cases}
+\end{equation}
+Obliczenia dla kolejnych momentów prowadzić najwygodniej jest sekwencyjnie.
+
+\subsection{Wyniki}
+
+Przeprowadzone zostały obliczenia dla różnych początkowych wychyleń.
+Przykładowe wyniki pokazane są na Rys.~\ref{fig:differentfi0}.
+Widać, że wraz ze zwiększaniem amplitudy drgań wydłuża się też okres.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=.5\textwidth]{different_fi0}
+    \caption{Wykres pokazuje przykładowe rozwiązania dla różnych początkowych
+        kątów wychyleń.
+        Zaobserwować można zwiększanie się okresu ze zwiększaniem amplitudy drgań.}
+    \label{fig:differentfi0}
+\end{figure}
+
+Zależność ta została dokładniej zbadana.
+Na Rys.~\ref{fig:periodchange} pokazana jest zależność okresu od amplitudy
+początkowej.
+Rośnie ona wraz ze wzrostem początkowego wychylenia.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=.5\textwidth]{period_change}
+    \caption{Na wykresie pokazana została zależność okresu drgań od amplitudy początkowej.}
+    \label{fig:periodchange}
+\end{figure}
+
+Wykres Rys.~\ref{fig:smallstepenergy} pokazuje zmianę energii całkowitej
+w~funkcji czasu.
+Mimo że powinna ona być stała w~trakcie ruchu, to w~symulacji numerycznej można
+zaobserwować jej odstępstwa od stałej wartości.
+Wraz ze zmniejszaniem kroku czasowego odchylenia te zmniejszają się.
+
+%\begin{figure}
+    %\centering
+    %\includegraphics[width=.5\textwidth]{small_step}
+    %\caption{Wykres pokazuje utratę precyzji dla zbyt długiego kroku czasowego.}
+    %\label{fig:smallstep}
+%\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=.5\textwidth]{small_step_energy}
+    \caption{Wykres pokazuje wartości energii całkowitej układu dla różnych
+        kroków czasowych.}
+    \label{fig:smallstepenergy}
+\end{figure}
+
+%\begin{thebibliography}{9}
+    %\bibitem{foster}
+        %I.~Foster: \emph{Designing and Building Parallel Programs}
+        %\url{http://www.mcs.anl.gov/dbpp/} dostęp 2015.10.14
+    %\bibitem{ccpregel}
+        %Reza Zadeh: \emph{Lecture 8}
+        %\url{http://stanford.edu/~rezab/dao/notes/lec8.pdf} dostęp 2015.11.17
+    %\bibitem{realgraphs}
+        %\url{https://snap.stanford.edu/data/index.html#web}
+%\end{thebibliography}
+
+\end{document}
