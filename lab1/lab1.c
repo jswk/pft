@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "Couldn't allocate enough memory");
         exit(1);
     }
-    
+
     q[0] = atof(argv[4]);
     w[0] = atof(argv[5]);
 
