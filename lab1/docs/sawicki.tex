@@ -67,8 +67,8 @@ je sprowadzić do układu równań pierwszego stopnia.
 \end{equation}
 
 Rozwiązanie tego układu równań będziemy prowadzić na pewnej zdyskretyzowanej
-siatce co wymusza wprowadzenie pewnego kroku czasowego (w~tym przypadku stałego) oraz zastosowanie różnic
-skończonych do wyrażenia przybliżeń różniczek.
+siatce co wymusza wprowadzenie pewnego kroku czasowego (w~tym przypadku
+stałego) oraz zastosowanie różnic skończonych do wyrażenia przybliżeń różniczek.
 \begin{equation}
     \begin{cases}
         d\omega(t) = - \beta^2 \sin{\varphi(t)} dt \\
@@ -122,19 +122,32 @@ Mimo że powinna ona być stała w~trakcie ruchu, to w~symulacji numerycznej mo�
 zaobserwować jej odstępstwa od stałej wartości.
 Wraz ze zmniejszaniem kroku czasowego odchylenia te zmniejszają się.
 
-%\begin{figure}
-    %\centering
-    %\includegraphics[width=.5\textwidth]{small_step}
-    %\caption{Wykres pokazuje utratę precyzji dla zbyt długiego kroku czasowego.}
-    %\label{fig:smallstep}
-%\end{figure}
-
-\begin{figure}
+\begin{figure}[h]
     \centering
     \includegraphics[width=.5\textwidth]{small_step_energy}
     \caption{Wykres pokazuje wartości energii całkowitej układu dla różnych
         kroków czasowych.}
     \label{fig:smallstepenergy}
+\end{figure}
+
+Miara błędu metody dla danego kroku czasowego została przybliżona poprzez
+amplitudę wahania się wartości energii całkowitej.
+Wynik takiej analizy pokazany jest na Rys.~\ref{fig:error}.
+Wartość energii całkowitej oscyluje z~częstotliwością dwa razy większą niż ruch
+wahadła.
+Z~tego względu do analizy wzięty został jedynie półokres wahadła, z~tego wynika
+chaos dla wartości kroku czasowego powyżej 0,15 gdzie metoda przestaje być stabilna.
+W~zakresie długości kroków czasowych, kiedy metoda jest stabilna zależność
+pomiędzy krokiem czasowym i~miarą błędu jest liniowa.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=.5\textwidth]{error}
+    \caption{Zależność miary błędu (amplitudy wahań energii całkowitej) od
+        długości kroku czasowego.
+        Dla dużych wartości kroku czasowego metoda traci stabilność co widać po
+        chaotycznym wykresie.}
+    \label{fig:error}
 \end{figure}
 
 %\begin{thebibliography}{9}
