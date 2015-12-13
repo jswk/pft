@@ -1,0 +1,7 @@
+./28_0_1.1_0_1.data  przykład z opisu
+./10_0_1_0_1.data    podobny jak z opisu ale mniejsze rozwarcie stożka, większa częstotliwość drgań
+./10_0.1_0_-1_1.data ruch w stronę ostrza stożka z niewielką prędkością transwersalną
+./10_1_0_-1_1.data   ruch w stronę ostrza stożka z trochę większą prędkością transwersalną
+./45_0.1_0_-2_1.data ruch w stronę ostrza dla stożka, który ma kąt prosty
+                     następuje odbicie od ostrza i spokojne wygaszenie drgań
+./85_0.5_0_-2_1.data rozwarty stożek, punkt wpada na drugą stronę i w końcu wraca
