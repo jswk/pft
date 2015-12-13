@@ -2,8 +2,6 @@
 #include<stdio.h>
 #include<stdlib.h>
 
-#define PI 3.14159265358979323846
-
 void print_record(double t, double *record);
 double get_energy(double *record);
 
@@ -18,7 +16,7 @@ int main(int argc, char *argv[]) {
 
     int steps = atoi(argv[1]);
     double dt = atof(argv[2]);
-    alpha = atof(argv[3]);
+    alpha = atof(argv[3])*M_PI/180.;
 
     double *curr = (double*) malloc(sizeof(double)*4);
     double *prev = (double*) malloc(sizeof(double)*4);

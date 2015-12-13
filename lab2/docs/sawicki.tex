@@ -1,0 +1,272 @@
+\documentclass[a4paper; 12pt]{article}
+
+% global includes
+\usepackage[polish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{courier} %times, kurier
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{indentfirst}
+\usepackage{icomma}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{pgfplots}
+\pgfplotsset{
+    compat=1.12,
+    width=9cm,
+    yticklabel={\num[round-mode=figures,round-precision=2]{\tick}}}
+%\usepgfplotslibrary{external}
+%\tikzexternalize
+
+\usepackage{listings}
+
+% local includes
+\usepackage[locale=FR]{siunitx}
+\sisetup{per-mode=symbol-or-fraction}
+
+\title{Ćwiczenie II: Symulacja komputerowa ruchu ciała w~układzie z~więzami}
+\author{Jakub Sawicki}
+\date{\today}
+
+\begin{document}
+\renewcommand{\figurename}{Rys.}
+\renewcommand{\tablename}{Tab.}
+\renewcommand{\abstractname}{Abstrakt}
+
+\maketitle
+
+\section{Stożek}
+
+W~tym ćwiczeniu rozpatrujemy ruch po powierzchni stożka o~kącie rozwarcia
+$2\alpha$ położonego jedną krawędzią na płaskim podłożu.
+Dwiema współrzędnymi uogólnionymi będą $z$ --- położenie na osi symetrii stożka
+oraz $\varphi$ --- kąt względem pionu.
+Stożek znajduje się w~pionowo skierowanym polu grawitacyjnym o~przyspieszeniu $g$.
+
+Ruch punktu materialnego w~tak zdefiniowanych więzach opisany jest równaniami:
+\begin{equation}
+    \begin{cases}
+        \ddot{\varphi}(t) = \frac{g\cos^2{\alpha}}{\sin{\alpha}}\frac{\sin{\varphi}}{z}
+            - \frac{2\dot{z}\dot{\varphi}}{z} \\
+        \ddot{z}(t) = \sin^2{\alpha}z\dot{\varphi}^2 
+            - g\sin{\alpha}\cos^2{\alpha}(1-\cos{\varphi})
+    \end{cases}
+    \label{eq:ODE}
+\end{equation}
+
+Układ taki rozbijany jest na układ czterech równań pierwszego stopnia, które
+następnie przekształcane są zgodnie z~metodą Eulera.
+
+Implementacja algorytmu znajduje się
+w~\url{https://github.com/jswk/pft/blob/master/lab2/lab2.c}.
+
+\subsection{Wyniki}
+
+W~pierwszej kolejności przeprowadzono obliczenia dla przykładu zadanego
+w~treści zadania.
+Wykres $\varphi$ oraz $z$ dla tego przypadku przedstawiony jest na
+Rys.~\ref{fig:data1}.
+Rozwiązanie pokrywa się z~rozwiązaniem przedstawionym w~treści zadania.
+Można na tej podstawie wnioskować, że implementacja daje poprawne wyniki
+(przynajmniej dla zadanych warunków początkowych).
+\begin{figure}[h]
+    \centering
+    \begin{tikzpicture}
+        \pgfplotsset{xmin=0, xmax=10}
+        \begin{axis}[
+                title={$\alpha=\ang{28};\,\dot{\varphi}=0;\,\varphi=\num{1.1};\,\dot{z}=0;\,z=1$},
+                xlabel={czas [\si{\s}]},
+                ylabel={$\varphi\,[\text{rad}]$},
+                axis y line*=left,
+        ]
+            \addplot[blue] table [x={t}, y={fi}] {28_0_1.1_0_1.data};
+        \end{axis}
+        \begin{axis}[
+                axis y line*=right,
+                ylabel={$z\,[\text{m}]$},
+        ]
+            \addplot[red] table [x={t}, y={z}] {28_0_1.1_0_1.data};
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Rozwiązanie dla warunków początkowych z opisu zadania.
+        $\alpha=\ang{28};\,\dot{\varphi}=0;\,\varphi=\num{1.1};\,\dot{z}=0;\,z=1$}
+    \label{fig:data1}
+\end{figure}
+
+Najciekawsze rozwiązania powstają dla położeń blisko ostrza stożka.
+Poniższe przypadki eksplorują te sytuacje.
+
+Poprawność rozwiązania można dodatkowo sprawdzić jak zachowywać się będzie
+punkt materialny jeżeli wpuszczony zostanie do stożka o mniejszym kącie
+rozwarcia z takimi samymi warunkami początkowymi jak dla stożka z treści
+zadania.
+Ze względu na mniejszą rozwartość drgania powinny być o większej
+częstotliwości, co rzeczywiście jest obserwowane dla takiego rozwiązania, patrz
+Rys.~\ref{fig:data2}.
+\begin{figure}[h]
+    \centering
+    \begin{tikzpicture}
+        \pgfplotsset{xmin=0, xmax=10}
+        \begin{axis}[
+                title={$\alpha=\ang{10};\,\dot{\varphi}=0;\,\varphi=\num{1};\,\dot{z}=0;\,z=1$},
+                xlabel={czas [\si{\s}]},
+                ylabel={$\varphi\,[\text{rad}]$},
+                axis y line*=left,
+        ]
+            \addplot[blue] table [x={t}, y={fi}] {10_0_1_0_1.data};
+        \end{axis}
+        \begin{axis}[
+                axis y line*=right,
+                ylabel={$z\,[\text{m}]$},
+        ]
+            \addplot[red] table [x={t}, y={z}] {10_0_1_0_1.data};
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Rozwiązanie dla $\alpha=\ang{10};\,\dot{\varphi}=0;\,\varphi=\num{1};\,\dot{z}=0;\,z=1$}
+    \label{fig:data2}
+\end{figure}
+
+\subsection{Ruch w stronę ostrza}
+Następnie przeliczone zostały przykłady, w których punkt porusza się w stronę
+ostrza stożka.
+Nie może on poruszać się dokładnie w kierunku ostrza~--- przebije się wtedy
+na stronę ujemnych wartości $z$ co znajduje się poza obszarem rozwiązań naszego
+modelu (rozwiązania takie zachowują się tak, jak gdyby stożek był położony pod
+powierzchnią, jeśli dla dodatnich $z$ znajduje się nad nią).
+
+Przeliczone zostały więc dwa przykłady, w których oprócz prędkości w kierunku
+ostrza punkt ma nadaną niewielką prędkość transwersalną.
+Przedstawione zostały na Rys.~\ref{fig:data3}.
+Na wykresach widać, że punkt zbliża się do ostrza na niewielką odległość gdzie
+za względu na niezerowy moment pędu osiąga dużą prędkość transwersalną.
+Dokonuje kilku obrotów wokół ostrza i odbija się od niego.
+\begin{figure}[h]
+    \centering
+    \begin{tikzpicture}[baseline]
+        \pgfplotsset{xmin=0, xmax=1.5, width=7cm}
+        \begin{axis}[
+                title={$\alpha=\ang{10};\,\dot{\varphi}=\num{0.1};\,\varphi=\num{0};\,\dot{z}=-1;\,z=1$},
+                xlabel={czas [\si{\s}]},
+                ylabel={$\varphi\,[\text{rad}]$},
+                axis y line*=left,
+                ymin=-2, ymax=20, 
+        ]
+            \addplot[blue] gnuplot [raw gnuplot] {
+                plot '10_0.1_0_-1_1.data' u 1:2 every 50;
+            };
+        \end{axis}
+        \begin{axis}[
+                axis y line*=right,
+                yticklabels={},
+                %ylabel={$z\,[\text{m}]$},
+        ]
+            \addplot[red] gnuplot [raw gnuplot] {
+                plot '10_0.1_0_-1_1.data' u 1:3 every 50;
+            };
+        \end{axis}
+    \end{tikzpicture}
+    \begin{tikzpicture}[baseline]
+        \pgfplotsset{xmin=0, xmax=1.5, width=7cm}
+        \begin{axis}[
+                title={$\alpha=\ang{10};\,\dot{\varphi}=\num{1};\,\varphi=\num{0};\,\dot{z}=-1;\,z=1$},
+                xlabel={czas [\si{\s}]},
+                %ylabel={$\varphi\,[\text{rad}]$},
+                yticklabels={},
+                axis y line*=left,
+                ymin=-2, ymax=20, 
+        ]
+            \addplot[blue] gnuplot [raw gnuplot] {
+                plot '10_1_0_-1_1.data' u 1:2 every 50;
+            };
+        \end{axis}
+        \begin{axis}[
+                axis y line*=right,
+                ylabel={$z\,[\text{m}]$},
+        ]
+            \addplot[red] gnuplot [raw gnuplot] {
+                plot '10_1_0_-1_1.data' u 1:3 every 50;
+            };
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Rozwiązania dla punktu poruszającego się w stronę ostrza stożka z
+        różnymi prędkościami transwersalnymi.}
+    \label{fig:data3}
+\end{figure}
+
+\subsection{Bardzo rozwarty stożek}
+Obliczone zostały również rozwiązania dla stożka o kątach rozwarcia
+$2\alpha=\ang{90}$ oraz $2\alpha=\ang{170}$.
+Rozwiązania są pokazane na Rys.~\ref{fig:data4}.
+\begin{figure}[h]
+    \centering
+    \begin{tikzpicture}[baseline]
+        \pgfplotsset{xmin=0, xmax=4, width=6cm}
+        \begin{axis}[
+                title={$\alpha=\ang{45};\,\dot{\varphi}=\num{0.1};\,\varphi=\num{0};\,\dot{z}=-2;\,z=1$},
+                xlabel={czas [\si{\s}]},
+                ylabel={$\varphi\,[\text{rad}]$},
+                axis y line*=left,
+                %ymin=-2, ymax=20, 
+        ]
+            \addplot[blue] gnuplot [raw gnuplot] {
+                plot '45_0.1_0_-2_1.data' u 1:2 every 50;
+            };
+        \end{axis}
+        \begin{axis}[
+                axis y line*=right,
+                %yticklabels={},
+                %ylabel={$z\,[\text{m}]$},
+        ]
+            \addplot[red] gnuplot [raw gnuplot] {
+                plot '45_0.1_0_-2_1.data' u 1:3 every 50;
+            };
+        \end{axis}
+    \end{tikzpicture}
+    \begin{tikzpicture}[baseline]
+        \pgfplotsset{xmin=0, xmax=40, width=6cm}
+        \begin{axis}[
+                title={$\alpha=\ang{85};\,\dot{\varphi}=\num{0.5};\,\varphi=\num{0};\,\dot{z}=-2;\,z=1$},
+                xlabel={czas [\si{\s}]},
+                %ylabel={$\varphi\,[\text{rad}]$},
+                %yticklabels={},
+                axis y line*=left,
+                %ymin=-2, ymax=20, 
+        ]
+            \addplot[blue] gnuplot [raw gnuplot] {
+                plot '85_0.5_0_-2_1.data' u 1:2 every 50;
+            };
+        \end{axis}
+        \begin{axis}[
+                axis y line*=right,
+                ylabel={$z\,[\text{m}]$},
+        ]
+            \addplot[red] gnuplot [raw gnuplot] {
+                plot '85_0.5_0_-2_1.data' u 1:3 every 50;
+            };
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Rozwiązania dla punktu poruszającego się w stronę ostrza stożków o
+        kątach rozwarcia \ang{90} i \ang{170}.}
+    \label{fig:data4}
+\end{figure}
+
+Dla kąta rozwarcia \ang{90} punkt omija ostrze wykonując pełny obrót wokół niego.
+
+Dla kąta rozwarcia \ang{170} punkt wchodzi daleko na lekko nachyloną część
+stożka i powoli hamuje.
+Następnie wraca na dół mijając ostrze w większej odległości.
+
+%\begin{thebibliography}{9}
+    %\bibitem{foster}
+        %I.~Foster: \emph{Designing and Building Parallel Programs}
+        %\url{http://www.mcs.anl.gov/dbpp/} dostęp 2015.10.14
+    %\bibitem{ccpregel}
+        %Reza Zadeh: \emph{Lecture 8}
+        %\url{http://stanford.edu/~rezab/dao/notes/lec8.pdf} dostęp 2015.11.17
+    %\bibitem{realgraphs}
+        %\url{https://snap.stanford.edu/data/index.html#web}
+%\end{thebibliography}
+
+\end{document}
