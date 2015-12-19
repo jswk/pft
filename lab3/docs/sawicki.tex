@@ -1,0 +1,195 @@
+\documentclass[a4paper; 12pt]{article}
+
+% global includes
+\usepackage[polish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{courier} %times, kurier
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{indentfirst}
+\usepackage{icomma}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{pgfplots}
+\pgfplotsset{
+    compat=1.12,
+    width=9cm,
+    %yticklabel={\num[round-mode=figures,round-precision=2]{\tick}},
+}
+%\usepgfplotslibrary{external}
+%\tikzexternalize
+
+\usepackage{listings}
+
+% local includes
+\usepackage[locale=FR]{siunitx}
+\sisetup{per-mode=symbol-or-fraction}
+
+\title{Ćwiczenie III: Modelowanie trajektorii cząstek naładowanych w~polu magnetycznym}
+\author{Jakub Sawicki}
+\date{\today}
+
+\begin{document}
+\renewcommand{\figurename}{Rys.}
+\renewcommand{\tablename}{Tab.}
+\renewcommand{\abstractname}{Abstrakt}
+
+\maketitle
+
+\section{Ruch cząstki naładowanej w~polu magnetycznym}
+
+Cząstka znajdująca się w~polu magnetycznym opisana jest poniższą funkcją Lagrange'a:
+\begin{equation}
+    L = \frac{m}{2}\dot{\mathbf{r}}^2+\frac{e}{2}\mathbf{r}\cdot\left( \dot{\mathbf{r}} \times \mathbf{B} \right)
+    \label{eq:L}
+\end{equation}
+W~cylindrycznym układzie współrzędnych z~osią z~skierowaną równolegle do pola, funkcja Hamiltona jest równa:
+\begin{equation}
+    H=\frac{1}{2m}\left(p_z^2+p_r^2+\frac{1}{r^2}p_\varphi^2\right)-\frac{eB}{2m}p_\varphi+\frac{e^2B^2}{8m}r^2
+    \label{eq:H}
+\end{equation}
+Korzystając z~równań Hamiltona otrzymuje się:
+\begin{subequations}
+\begin{align}
+    \dot{z}&=\frac{p_z}{m}&\dot{p}_z&=0 \\
+    \dot{\varphi}&=\frac{p_\varphi}{mr^2}-\frac{eB}{2m}&\dot{p}_\varphi&=0 \\
+    \dot{r}&=\frac{p_r}{m}&\dot{p}_r&=\frac{p_\varphi^2}{mr^3}-\frac{e^2rB^2}{4m}
+\end{align}
+\end{subequations}
+Ruch w~kierunku równoległym do pola jest jednostajny i~zostaje zignorowany
+(pozostałe współrzędne i~ich pędy też od niego nie zależą).
+$p_\varphi=\text{const}$, zostają więc tylko trzy równania do rozwiązania.
+Zapisując je w~iteracyjnie:
+\begin{subequations}
+\begin{align}
+    \varphi(t+\Delta t)&=\varphi(t)+\left( \frac{p_\varphi(0)}{mr^2(t)}-\frac{eB}{2m} \right)\Delta t \\
+    r(t+\Delta t)&=r(t)+\frac{p_r(t)}{m}\Delta t \\
+    p_r(t+\Delta t)&=p_r(t)+\left( \frac{p_\varphi^2(0)}{mr^3(t)}-\frac{e^2rB^2}{4m} \right)\Delta t
+\end{align}
+\end{subequations}
+
+Dla uproszczenia rachunków reszta parametrów układu $m$, $e$ i $B$ jest równa \num{1}.
+
+\section{Wyniki}
+
+Na wykresach ruch zaczyna się zawsze od punktu $(2,\,0)$.
+
+Uruchomienie przedstawione na Rys.~\ref{fig:data1} pokazuje poprawne zachowanie
+się algorytmu dla zadanych danych.
+Ruch odbywa się dokładnie wokół zera układu współrzędnych i~energia jest stała
+w~czasie.
+
+Dla o~połowę mniejszej wartości natężenia pola magnetycznego punkt zatacza
+okrąg o~dwa razy większej średnicy, patrz Rys.~\ref{fig:data2}.
+Jako, że okres symulacji jest taki sam jak w~poprzednim przypadku, to punkt
+zatacza tylko niecałą połowę okręgu, którego obwód jest dwa razy większy~---
+a~prędkość punktu niezmieniona.
+Tutaj występują wahania energii, jednak dla przyjętego kroku czasowego są one
+mniejsze niż \num{0.1} promila.
+
+Dodanie obiektowi dodatkowego pędu skierowanego radialnie prowadzi do
+odpowiedniej zmiany położenia toru.
+Tutaj błąd energii nie jest większy niż procent.
+Można też zaobserwować, że błąd wzrasta w~pobliżu punktu $(0,\,0)$.
+
+\begin{figure}
+    \centering
+    \begin{tikzpicture}[baseline]
+        \pgfplotsset{width=7cm}
+        \begin{axis}[
+                xlabel={czas [\si{\s}]},
+                ylabel={energia},
+                %ymin=-2, ymax=20, 
+        ]
+            \addplot[blue] table [x=t, y=E] {0.01_-0.5_1_0_0_2};
+        \end{axis}
+    \end{tikzpicture}
+    \begin{tikzpicture}[baseline]
+        \pgfplotsset{width=7cm}
+        \begin{axis}[
+                xlabel={x},
+                ylabel={y},
+                %ymin=-2, ymax=20, 
+                axis equal,
+        ]
+            \addplot[red] table [x=x, y=y] {0.01_-0.5_1_0_0_2};
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Rozwiązania dla $\Delta t=\num{0.01}$, $B=\num{-0.5}$,
+        $p_\varphi=\num{1}$, $\varphi(0)=\num{0}$, $p_r(0)=\num{0}$
+        i~$r(0)=\num{2}$.}
+    \label{fig:data1}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \begin{tikzpicture}[baseline]
+        \pgfplotsset{width=7cm}
+        \begin{axis}[
+                xlabel={czas [\si{\s}]},
+                ylabel={energia},
+                yticklabel={\num[round-mode=figures,round-precision=5]{\tick}},
+        ]
+            \addplot[blue] table [x=t, y=E] {0.01_-0.25_1_0_0_2};
+        \end{axis}
+    \end{tikzpicture}
+    \begin{tikzpicture}[baseline]
+        \pgfplotsset{width=7cm}
+        \begin{axis}[
+                xlabel={x},
+                ylabel={y},
+                %ymin=-2, ymax=20, 
+                axis equal,
+        ]
+            \addplot[red] table [x=x, y=y] {0.01_-0.25_1_0_0_2};
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Rozwiązania dla $\Delta t=\num{0.01}$, $B=\num{-0.25}$,
+        $p_\varphi=\num{1}$, $\varphi(0)=\num{0}$, $p_r(0)=\num{0}$
+        i~$r(0)=\num{2}$.}
+    \label{fig:data2}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \begin{tikzpicture}[baseline]
+        \pgfplotsset{width=7cm}
+        \begin{axis}[
+                xlabel={czas [\si{\s}]},
+                ylabel={energia},
+                yticklabel={\num[round-mode=figures,round-precision=5]{\tick}},
+        ]
+            \addplot[blue] table [x=t, y=E] {0.01_-0.5_1_0_1_2};
+        \end{axis}
+    \end{tikzpicture}
+    \begin{tikzpicture}[baseline]
+        \pgfplotsset{width=7cm}
+        \begin{axis}[
+                xlabel={x},
+                ylabel={y},
+                %ymin=-2, ymax=20, 
+                axis equal,
+        ]
+            \addplot[red] table [x=x, y=y] {0.01_-0.5_1_0_1_2};
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Rozwiązania dla $\Delta t=\num{0.01}$, $B=\num{-0.5}$,
+        $p_\varphi=\num{1}$, $\varphi(0)=\num{0}$, $p_r(0)=\num{1}$
+        i~$r(0)=\num{2}$.}
+    \label{fig:data3}
+\end{figure}
+
+%\begin{thebibliography}{9}
+    %\bibitem{foster}
+        %I.~Foster: \emph{Designing and Building Parallel Programs}
+        %\url{http://www.mcs.anl.gov/dbpp/} dostęp 2015.10.14
+    %\bibitem{ccpregel}
+        %Reza Zadeh: \emph{Lecture 8}
+        %\url{http://stanford.edu/~rezab/dao/notes/lec8.pdf} dostęp 2015.11.17
+    %\bibitem{realgraphs}
+        %\url{https://snap.stanford.edu/data/index.html#web}
+%\end{thebibliography}
+
+\end{document}
