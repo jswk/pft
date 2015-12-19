@@ -35,8 +35,8 @@ int main(int argc, char *argv[]) {
     print_record(t, prev);
     for(int i = 0; i < steps; i++) {
         curr[0] = prev[0] + (p_fi/em/pow(prev[2],2)-e*B/2./em)*dt;
-        curr[1] = prev[1] + (pow(p_fi,2)/pow(prev[2],3)-pow(e*B,2)*prev[2]/4.)/em*dt; 
-        curr[2] = prev[2] + curr[1]/em*dt; 
+        curr[1] = prev[1] + (pow(p_fi,2)/pow(prev[2],3)-pow(e*B,2)*prev[2]/4.)/em*dt;
+        curr[2] = prev[2] + curr[1]/em*dt;
 
         t += dt;
         print_record(t, curr);
@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {
 void print_record(double t, double *record) {
     double x = record[2]*cos(record[0]);
     double y = record[2]*sin(record[0]);
-    printf("%f %f %f %f\n", t, x, y, get_energy(record));
+    printf("%.10f %.10f %.10f %.10f\n", t, x, y, get_energy(record));
 }
 
 double get_energy(double *record) {
