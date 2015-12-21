@@ -80,20 +80,6 @@ Uruchomienie przedstawione na Rys.~\ref{fig:data1} pokazuje poprawne zachowanie
 się algorytmu dla zadanych danych.
 Ruch odbywa się dokładnie wokół zera układu współrzędnych i~energia jest stała
 w~czasie.
-
-Dla o~połowę mniejszej wartości natężenia pola magnetycznego punkt zatacza
-okrąg o~dwa razy większej średnicy, patrz Rys.~\ref{fig:data2}.
-Jako, że okres symulacji jest taki sam jak w~poprzednim przypadku, to punkt
-zatacza tylko niecałą połowę okręgu, którego obwód jest dwa razy większy~---
-a~prędkość punktu niezmieniona.
-Tutaj występują wahania energii, jednak dla przyjętego kroku czasowego są one
-mniejsze niż \num{0.1} promila.
-
-Dodanie obiektowi dodatkowego pędu skierowanego radialnie prowadzi do
-odpowiedniej zmiany położenia toru.
-Tutaj błąd energii nie jest większy niż procent.
-Można też zaobserwować, że błąd wzrasta w~pobliżu punktu $(0,\,0)$.
-
 \begin{figure}
     \centering
     \begin{tikzpicture}[baseline]
@@ -123,6 +109,13 @@ Można też zaobserwować, że błąd wzrasta w~pobliżu punktu $(0,\,0)$.
     \label{fig:data1}
 \end{figure}
 
+Dla o~połowę mniejszej wartości natężenia pola magnetycznego punkt zatacza
+okrąg o~dwa razy większej średnicy, patrz Rys.~\ref{fig:data2}.
+Jako, że okres symulacji jest taki sam jak w~poprzednim przypadku, to punkt
+zatacza tylko niecałą połowę okręgu, którego obwód jest dwa razy większy~---
+a~prędkość punktu niezmieniona.
+Tutaj występują wahania energii, jednak dla przyjętego kroku czasowego są one
+mniejsze niż \num{0.1} promila.
 \begin{figure}
     \centering
     \begin{tikzpicture}[baseline]
@@ -152,6 +145,10 @@ Można też zaobserwować, że błąd wzrasta w~pobliżu punktu $(0,\,0)$.
     \label{fig:data2}
 \end{figure}
 
+Dodanie obiektowi dodatkowego pędu skierowanego radialnie prowadzi do
+odpowiedniej zmiany położenia toru, Rys.~\ref{fig:data3}.
+Tutaj błąd energii nie jest większy niż procent.
+Można też zaobserwować, że błąd wzrasta w~pobliżu punktu $(0,\,0)$.
 \begin{figure}
     \centering
     \begin{tikzpicture}[baseline]
@@ -159,7 +156,7 @@ Można też zaobserwować, że błąd wzrasta w~pobliżu punktu $(0,\,0)$.
         \begin{axis}[
                 xlabel={czas [\si{\s}]},
                 ylabel={energia},
-                yticklabel={\num[round-mode=figures,round-precision=5]{\tick}},
+                yticklabel={\num[round-mode=figures,round-precision=3]{\tick}},
         ]
             \addplot[blue] table [x=t, y=E] {0.01_-0.5_1_0_1_2};
         \end{axis}
@@ -180,6 +177,135 @@ Można też zaobserwować, że błąd wzrasta w~pobliżu punktu $(0,\,0)$.
         i~$r(0)=\num{2}$.}
     \label{fig:data3}
 \end{figure}
+
+Przedłużenie symulacji, tak aby punkt zatoczył więcej niż jeden okrąg pozwala
+zbadać, czy rozwiązanie wykazuje dryf ze względu na niedokładność obliczeń.
+Dla toru położonego symetrycznie wokół punktu $(0,\,0)$ dryf nie występuje, tak
+jak i~wahania energii były równe zeru.
+Rozmycie okręgu widoczne na Rys.~\ref{fig:data4} ukazującym ten przypadek
+wynika z~tego, że punkty choć układają się na okręgu, to tworzą cięciwy, które
+mają znaczną wielkość, patrz Rys.~\ref{fig:data41}.
+\begin{figure}
+    \centering
+    \begin{tikzpicture}[baseline]
+        \pgfplotsset{width=7cm}
+        \begin{axis}[
+                xlabel={czas [\si{\s}]},
+                ylabel={energia},
+                yticklabel={\num[round-mode=figures,round-precision=2]{\tick}},
+                xticklabel={\num[round-mode=figures,round-precision=1]{\tick}},
+        ]
+            \addplot[blue] table [x=t, y=E] {1_-0.5_1_0_0_2};
+        \end{axis}
+    \end{tikzpicture}
+    \begin{tikzpicture}[baseline]
+        \pgfplotsset{width=7cm}
+        \begin{axis}[
+                xlabel={x},
+                ylabel={y},
+                %ymin=-2, ymax=20, 
+                axis equal,
+        ]
+            \addplot[red] table [x=x, y=y] {1_-0.5_1_0_0_2};
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Rozwiązania dla $\Delta t=\num{1}$, $B=\num{-0.5}$,
+        $p_\varphi=\num{1}$, $\varphi(0)=\num{0}$, $p_r(0)=\num{0}$
+        i~$r(0)=\num{2}$.}
+    \label{fig:data4}
+\end{figure}
+\begin{figure}
+    \centering
+    \begin{tikzpicture}[baseline]
+        \pgfplotsset{width=7cm}
+        \begin{axis}[
+                xlabel={x},
+                ylabel={y},
+                ymin=-2.05, ymax=-1.9, 
+                xmin=-0.05, xmax=0.05,
+                axis equal,
+        ]
+            \addplot[red] table [x=x, y=y] {1_-0.5_1_0_0_2};
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Zbliżenie na rozwiązanie dla $\Delta t=\num{1}$, $B=\num{-0.5}$,
+        $p_\varphi=\num{1}$, $\varphi(0)=\num{0}$, $p_r(0)=\num{0}$
+        i~$r(0)=\num{2}$.}
+    \label{fig:data41}
+\end{figure}
+
+Sprawienie, że ruch nie jest symetryczny wokół punktu $(0,\,0)$ powoduje
+powstanie precesji.
+Dla kroku czasowego \num{1} rozwiązanie nie jest stabilne, dlatego na
+Rys.~\ref{fig:data5} pokazany jest przypadek kroku czasowego \num{0.1}.
+Widać tam precesję rozwiązania wokół punktu $(0,\,0)$, co lepiej widać na
+Rys.~\ref{fig:data51}, gdzie linią połączone są co 126 punkty rozwiązania~---
+jako że jedno okrążenie ma w~przybliżeniu okres \num{12.6}.
+Tor cząstki wykonywać będzie więc dodatkową precesję wokół punktu zero jeżeli
+występować będzie ruch w~kierunku radialnym oprócz transwersalnego.
+\begin{figure}
+    \centering
+    \begin{tikzpicture}[baseline]
+        \pgfplotsset{width=7cm}
+        \begin{axis}[
+                xlabel={czas [\si{\s}]},
+                ylabel={energia},
+                yticklabel={\num[round-mode=figures,round-precision=2]{\tick}},
+                xticklabel={\num[round-mode=figures,round-precision=1]{\tick}},
+        ]
+            \addplot[blue] table [x=t, y=E] {0.1_-0.5_1_0_1_2};
+        \end{axis}
+    \end{tikzpicture}
+    \begin{tikzpicture}[baseline]
+        \pgfplotsset{width=7cm}
+        \begin{axis}[
+                xlabel={x},
+                ylabel={y},
+                %ymin=-2, ymax=20, 
+                axis equal,
+        ]
+            \addplot[red] table [x=x, y=y] {0.1_-0.5_1_0_1_2};
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Rozwiązania dla $\Delta t=\num{0.1}$, $B=\num{-0.5}$,
+        $p_\varphi=\num{1}$, $\varphi(0)=\num{0}$, $p_r(0)=\num{1}$
+        i~$r(0)=\num{2}$.}
+    \label{fig:data5}
+\end{figure}
+\begin{figure}
+    \centering
+    \begin{tikzpicture}[baseline]
+        \pgfplotsset{width=7cm}
+        \begin{axis}[
+                xlabel={x},
+                ylabel={y},
+                %ymin=-2, ymax=20, 
+                axis equal,
+        ]
+            \addplot[red] table [x=x, y=y] {0.1_-0.5_1_0_1_2_prec};
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Precesja rozwiązania dla $\Delta t=\num{0.1}$, $B=\num{-0.5}$,
+        $p_\varphi=\num{1}$, $\varphi(0)=\num{0}$, $p_r(0)=\num{1}$
+        i~$r(0)=\num{2}$.}
+    \label{fig:data51}
+\end{figure}
+
+\section{Podsumowanie}
+
+Analiza rozwiązań wykazała, że rozwiązanie jest dokładne jeśli ruch wykonywany
+jest symetrycznie wokół punktu $(0,\,0)$.
+Wtedy nie występują wahania energii i~można dość dowolnie manipulować krokiem
+czasowym.
+
+Jeżeli ruch nie jest symetryczny (wokół punktu $(0,\,0)$) to występują wahania
+energii.
+Dla badanych warunków początkowych jednak dobranie kroku czasowego rzędu
+\num{0.01} pozwalało zredukować go do skali promila.
+Dla takich niesymetrycznych rozwiązań występuje precesja wokół punktu symetrii $(0,\,0)$.
+Jej intensywność wzrasta wraz ze zwiększaniem kroku czasowego.
+Dla kroku \num{0.01} jest bardzo powolna, jednak zastosowanie kroku \num{0.1}
+powoduje, że jej szybkość wzrasta.
 
 %\begin{thebibliography}{9}
     %\bibitem{foster}
